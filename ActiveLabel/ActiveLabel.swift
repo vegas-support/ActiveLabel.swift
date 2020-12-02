@@ -64,6 +64,10 @@ typealias ElementTuple = (range: NSRange, element: ActiveElement, type: ActiveTy
         didSet { updateTextStorage(parseText: false) }
     }
     
+    public var mentions = [String:String]() {
+        didSet { updateTextStorage() }
+    }
+    
     // MARK: - Computed Properties
     private var hightlightFont: UIFont? {
         guard let highlightFontName = highlightFontName, let highlightFontSize = highlightFontSize else { return nil }
@@ -376,7 +380,36 @@ typealias ElementTuple = (range: NSRange, element: ActiveElement, type: ActiveTy
             activeElements[type] = hashtagElements
         }
         
+        if let _ = activeElements[.mention] {
+            for i in 0..<activeElements[.mention]!.count {
+                let element = activeElements[.mention]![i]
+                let range = element.range
+                if let sRange = Range(range, in: textString) {
+                    var id = String(textString[sRange])
+                    id.removeFirst()
+                    if let name = mentions[id] {
+                        textString.replaceSubrange(sRange, with: "@\(name)")
+                        let offset = name.count - range.length + 1 //1 for @
+                        updateActiveElements(from: range.location, offset: offset)
+                    }
+                }
+            }
+        }
+        
         return textString
+    }
+    
+    fileprivate func updateActiveElements(from: Int, offset: Int) {
+        for type in activeElements.keys {
+            for i in 0..<activeElements[type]!.count {
+                let range = activeElements[type]![i].range
+                if range.location == from {
+                    activeElements[type]![i].range.length += offset
+                } else if range.location > from {
+                    activeElements[type]![i].range.location += offset
+                }
+            }
+        }
     }
     
     
