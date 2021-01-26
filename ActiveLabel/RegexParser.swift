@@ -13,8 +13,13 @@ struct RegexParser {
     static let hashtagPattern = "(?:^|\\s|$)#[\\p{L}0-9_]*"
     static let mentionPattern = "@uuid:[\\p{L}0-9_-]*"
     static let emailPattern = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
-    static let urlPattern = "(^|[\\s.:;?\\-\\]<\\(])" +
+    //Initial Regex
+    /*static let urlPattern = "(^|[\\s.:;?\\-\\]<\\(])" +
         "((https?://|www\\.|pic\\.)[-\\w;/?:@&=+$\\|\\_.!~*\\|'()\\[\\]%#,☺]+[\\w/#](\\(\\))?)" +
+    "(?=$|[\\s',\\|\\(\\).:;?\\-\\[\\]>\\)])"*/
+    
+    //Do not have rule for letter before http
+    static let urlPattern = "((https?://|www\\.|pic\\.)[-\\w;/?:@&=+$\\|\\_.!~*\\|'()\\[\\]%#,☺]+[\\w/#](\\(\\))?)" +
     "(?=$|[\\s',\\|\\(\\).:;?\\-\\[\\]>\\)])"
 
     private static var cachedRegularExpressions: [String : NSRegularExpression] = [:]

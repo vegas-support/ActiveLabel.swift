@@ -543,7 +543,9 @@ typealias ElementTuple = (range: NSRange, element: ActiveElement, type: ActiveTy
     }
     
     fileprivate func didTapStringURL(_ stringURL: String) {
-        guard let urlHandler = urlTapHandler, let url = URL(string: stringURL) else {
+        //Avoid wrong string format for url (space, accentuation ...)
+        let cleanUrl = stringURL.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)
+        guard let urlHandler = urlTapHandler, let urlStr = cleanUrl, let url = URL(string: urlStr) else {
             delegate?.didSelect(stringURL, type: .url)
             return
         }
